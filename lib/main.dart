@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timely/components/week_panel_list.dart';
@@ -68,7 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     // Compress workingTimesJson with gzip
-    final List<int> compressedWorkingTimesJson = gzip.encode(utf8.encode(workingTimesJson));
+    final List<int> compressedWorkingTimesJson =
+        gzip.encode(utf8.encode(workingTimesJson));
     // Pick a directory to save the file
     final String? directory = await FilePicker.platform.getDirectoryPath();
 

@@ -6,7 +6,8 @@ part of 'working_time.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-WorkingTime _$WorkingTimeFromJson(Map<String, dynamic> json) => WorkingTime(
+WorkingTime _$WorkingTimeFromJson(final Map<String, dynamic> json) =>
+    WorkingTime(
       startTime: DateTime.parse(json['start_time'] as String),
       endTime: json['end_time'] == null
           ? null
@@ -14,7 +15,7 @@ WorkingTime _$WorkingTimeFromJson(Map<String, dynamic> json) => WorkingTime(
       uuid: json['uuid'] as String?,
     );
 
-Map<String, dynamic> _$WorkingTimeToJson(WorkingTime instance) =>
+Map<String, dynamic> _$WorkingTimeToJson(final WorkingTime instance) =>
     <String, dynamic>{
       'uuid': instance.uuid,
       'start_time': instance.startTime.toIso8601String(),
