@@ -16,9 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Build
-        run: flutter test
-
       - name: Format
         run: flutter format --set-exit-if-changed .
 
