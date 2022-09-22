@@ -6,7 +6,8 @@ part of 'working_time.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-WorkingTime _$WorkingTimeFromJson(final Map<String, dynamic> json) => WorkingTime(
+WorkingTime _$WorkingTimeFromJson(final Map<String, dynamic> json) =>
+    WorkingTime(
       startTime: DateTime.parse(json['start_time'] as String),
       endTime: json['end_time'] == null
           ? null
