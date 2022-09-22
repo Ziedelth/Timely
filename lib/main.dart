@@ -82,32 +82,72 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> import() async {
-    // // Pick a file to import
-    // final FilePickerResult? result = await FilePicker.platform.pickFiles(
-    //   type: FileType.custom,
-    //   allowedExtensions: <String>['tly'],
-    // );
-    //
-    // if (result == null) {
-    //   return;
-    // }
-    //
-    // // Read file
-    // final File file = File(result.files.single.path!);
-    // final List<int> compressedWorkingTimesJson = await file.readAsBytes();
-    //
-    // // Decompress compressedWorkingTimesJson with gzip
-    // final String workingTimesJson = utf8.decode(gzip.decode(compressedWorkingTimesJson));
-    // // Parse workingTimesJson
-    // final List<dynamic> workingTimesJsonList = jsonDecode(workingTimesJson);
-    // final List<WorkingTime> workingTimes = workingTimesJsonList
-    //     .map((final dynamic e) => WorkingTime.fromJson(jsonDecode(e)))
-    //     .where((final WorkingTime element) => !_workingTimes.any((final WorkingTime wt) => wt.uuid == element.uuid))
-    //     .toList();
-    //
-    // if (kDebugMode) {
-    //   print(workingTimes);
-    // }
+    // Pick a file to import
+    final FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result == null) {
+      return;
+    }
+
+    final String path = result.files.single.path!;
+
+    if (!path.endsWith('.tly')) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Invalid file type',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+
+      return;
+    }
+
+    // Read file
+    final File file = File(path);
+    final List<int> compressedWorkingTimesJson = await file.readAsBytes();
+
+    // Decompress compressedWorkingTimesJson with gzip
+    final String workingTimesJson =
+        utf8.decode(gzip.decode(compressedWorkingTimesJson));
+    // Parse workingTimesJson
+    final List<dynamic> workingTimesJsonList = jsonDecode(workingTimesJson);
+    final List<WorkingTime> workingTimes = workingTimesJsonList
+        .map((final dynamic e) => WorkingTime.fromJson(jsonDecode(e)))
+        .where(
+          (final WorkingTime element) => !_workingTimes
+              .any((final WorkingTime wt) => wt.uuid == element.uuid),
+        )
+        .toList();
+
+    if (workingTimes.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No new working times found',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+
+      return;
+    }
+
+    _workingTimes.addAll(workingTimes);
+    _workingTimes.sort(
+      (final WorkingTime a, final WorkingTime b) =>
+          a.startTime.compareTo(b.startTime),
+    );
+    await setWorkingTimes();
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   WorkingTime? get currentWorkingTime {
@@ -213,13 +253,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 PopupMenuDivider(),
-                // PopupMenuItem<int>(
-                //   value: 2,
-                //   child: ListTile(
-                //     leading: Icon(Icons.file_upload),
-                //     title: Text('Importer'),
-                //   ),
-                // ),
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: ListTile(
+                    leading: Icon(Icons.file_upload),
+                    title: Text('Importer'),
+                  ),
+                ),
                 PopupMenuItem<int>(
                   value: 3,
                   child: ListTile(

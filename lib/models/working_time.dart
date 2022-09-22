@@ -36,4 +36,9 @@ class WorkingTime {
         (final double previousValue, final WorkingTime element) =>
             previousValue + element.diffInSecs,
       );
+
+  @override
+  String toString() {
+    return 'WorkingTime{uuid: $uuid, startTime: $startTime, endTime: $endTime}';
+  }
 }
