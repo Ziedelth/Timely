@@ -68,7 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     // Compress workingTimesJson with gzip
-    final List<int> compressedWorkingTimesJson = gzip.encode(utf8.encode(workingTimesJson));
+    final List<int> compressedWorkingTimesJson =
+        gzip.encode(utf8.encode(workingTimesJson));
     // Pick a directory to save the file
     final String? directory = await FilePicker.platform.getDirectoryPath();
 
