@@ -1,0 +1,42 @@
+name: timely
+description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  charts_flutter: ^0.12.0
+  file_picker: ^5.2.0
+  flutter:
+    sdk: flutter
+  intl: ^0.17.0
+  json_annotation: ^4.6.0
+  shared_preferences: ^2.0.15
+  uuid: ^3.0.6
+
+dev_dependencies:
+  build_runner: ^2.2.0
+  change_app_package_name: ^1.1.0
+  flutter_launcher_icons_maker: ^0.10.2
+  flutter_lints: ^2.0.1
+  flutter_native_splash: ^2.2.9
+  json_serializable: ^6.3.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - 'assets/icon.png'
+
+flutter_icons:
+  image_path: 'assets/icon.png'
+  android: true
+  ios: true
+  windows: true
+  web: true
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: 'assets/icon.png'
