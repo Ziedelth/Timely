@@ -21,6 +21,7 @@ class Data {
 }
 
 class _StatsViewState extends State<StatsView> {
+  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   final List<Series<Data, String>> seriesList = <Series<Data, String>>[];
 
   double get sum {
@@ -32,7 +33,6 @@ class _StatsViewState extends State<StatsView> {
   }
 
   List<Data> get getDayData {
-    final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
     // Get all days of times
     final List<String> days = widget.times
         .map((final WorkingTime e) => dateFormat.format(e.startTime))
@@ -52,15 +52,25 @@ class _StatsViewState extends State<StatsView> {
               ),
         )
         .toList();
+
+    // Get all 15 last days
+    final List<String> lastDays =
+        days.length > 15 ? days.sublist(days.length - 15, days.length) : days;
+
+    // Get all 15 last datas
+    final List<double> lastDatas = datas.length > 15
+        ? datas.sublist(datas.length - 15, datas.length)
+        : datas;
+
     // Return all datas
     return List<Data>.generate(
-      days.length,
-      (final int index) => Data(days[index], datas[index]),
+      lastDays.length,
+      (final int index) =>
+          Data(lastDays[index].split('/').take(2).join('/'), lastDatas[index]),
     );
   }
 
   List<Data> get getDayDataAverage {
-    final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
     // Get all days of times
     final List<String> days = widget.times
         .map((final WorkingTime e) => dateFormat.format(e.startTime))
@@ -88,10 +98,21 @@ class _StatsViewState extends State<StatsView> {
                   .length,
         )
         .toList();
+
+    // Get all 15 last days
+    final List<String> lastDays =
+        days.length > 15 ? days.sublist(days.length - 15, days.length) : days;
+
+    // Get all 15 last datas
+    final List<double> lastDatas = datas.length > 15
+        ? datas.sublist(datas.length - 15, datas.length)
+        : datas;
+
     // Return all datas
     return List<Data>.generate(
-      days.length,
-      (final int index) => Data(days[index], datas[index]),
+      lastDays.length,
+      (final int index) =>
+          Data(lastDays[index].split('/').take(2).join('/'), lastDatas[index]),
     );
   }
 
