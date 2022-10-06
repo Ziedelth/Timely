@@ -4,15 +4,20 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timely/components/week_panel_list.dart';
 import 'package:timely/extensions.dart';
 import 'package:timely/models/week_working_time.dart';
 import 'package:timely/models/working_time.dart';
 import 'package:timely/views/stats_view.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Europe/Paris'));
   runApp(const MyApp());
 }
 
@@ -43,6 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
   late final SharedPreferences _sharedPreferences;
   late final List<WorkingTime> _workingTimes;
   bool isInitialized = false;
+  final FlutterLocalNotificationsPlugin flnp =
+      FlutterLocalNotificationsPlugin();
+  final AndroidInitializationSettings ais =
+      const AndroidInitializationSettings('splash');
 
   List<WorkingTime> get savedWorkingTimes {
     final List<String> workingTimesJson =
@@ -115,13 +124,6 @@ class _MyHomePageState extends State<MyHomePage> {
         utf8.decode(gzip.decode(compressedWorkingTimesJson));
     // Parse workingTimesJson
     final List<dynamic> workingTimesJsonList = jsonDecode(workingTimesJson);
-    // final List<WorkingTime> workingTimes = workingTimesJsonList
-    //     .map((final dynamic e) => WorkingTime.fromJson(jsonDecode(e)))
-    //     .where(
-    //       (final WorkingTime element) => !_workingTimes
-    //           .any((final WorkingTime wt) => wt.uuid == element.uuid),
-    //     )
-    //     .toList();
 
     showDialog(
       context: context,
@@ -234,6 +236,15 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((final Duration _) async {
+      await flnp.initialize(
+        InitializationSettings(android: ais),
+      );
+
+      await flnp
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestPermission();
+
       _sharedPreferences = await SharedPreferences.getInstance();
       _workingTimes = savedWorkingTimes;
       isInitialized = true;
@@ -283,6 +294,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   if (cwt == null) {
                     _workingTimes.add(WorkingTime(startTime: DateTime.now()));
+
+                    await flnp.zonedSchedule(
+                      0,
+                      "It's time",
+                      'Faites une pause, cela fait 3h30min que vous travaillez sans relache',
+                      tz.TZDateTime.now(tz.local).add(const Duration(minutes: 210)),
+                      const NotificationDetails(
+                        android: AndroidNotificationDetails('time_to_out', "It's time"),
+                      ),
+                      uiLocalNotificationDateInterpretation:
+                      UILocalNotificationDateInterpretation.absoluteTime,
+                      androidAllowWhileIdle: true,
+                    );
                   } else {
                     cwt.end();
                   }
