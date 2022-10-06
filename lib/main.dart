@@ -299,12 +299,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       0,
                       "It's time",
                       'Faites une pause, cela fait 3h30min que vous travaillez sans relache',
-                      tz.TZDateTime.now(tz.local).add(const Duration(minutes: 210)),
+                      tz.TZDateTime.now(tz.local)
+                          .add(const Duration(minutes: 210)),
                       const NotificationDetails(
-                        android: AndroidNotificationDetails('time_to_out', "It's time"),
+                        android: AndroidNotificationDetails(
+                          'time_to_out',
+                          "It's time",
+                        ),
                       ),
                       uiLocalNotificationDateInterpretation:
-                      UILocalNotificationDateInterpretation.absoluteTime,
+                          UILocalNotificationDateInterpretation.absoluteTime,
                       androidAllowWhileIdle: true,
                     );
                   } else {
