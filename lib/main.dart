@@ -115,39 +115,106 @@ class _MyHomePageState extends State<MyHomePage> {
         utf8.decode(gzip.decode(compressedWorkingTimesJson));
     // Parse workingTimesJson
     final List<dynamic> workingTimesJsonList = jsonDecode(workingTimesJson);
-    final List<WorkingTime> workingTimes = workingTimesJsonList
-        .map((final dynamic e) => WorkingTime.fromJson(jsonDecode(e)))
-        .where(
-          (final WorkingTime element) => !_workingTimes
-              .any((final WorkingTime wt) => wt.uuid == element.uuid),
-        )
-        .toList();
+    // final List<WorkingTime> workingTimes = workingTimesJsonList
+    //     .map((final dynamic e) => WorkingTime.fromJson(jsonDecode(e)))
+    //     .where(
+    //       (final WorkingTime element) => !_workingTimes
+    //           .any((final WorkingTime wt) => wt.uuid == element.uuid),
+    //     )
+    //     .toList();
 
-    if (workingTimes.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No new working times found',
-              textAlign: TextAlign.center,
+    showDialog(
+      context: context,
+      builder: (final BuildContext context) {
+        return AlertDialog(
+          title: const Text("Type d'importation"),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                final List<WorkingTime> workingTimes = workingTimesJsonList
+                    .map(
+                      (final dynamic e) => WorkingTime.fromJson(jsonDecode(e)),
+                    )
+                    .toList();
+
+                if (workingTimes.isEmpty) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'No new working times found',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return;
+                }
+
+                _workingTimes.clear();
+                _workingTimes.addAll(workingTimes);
+                _workingTimes.sort(
+                  (final WorkingTime a, final WorkingTime b) =>
+                      a.startTime.compareTo(b.startTime),
+                );
+                await setWorkingTimes();
+
+                if (mounted) {
+                  setState(() {});
+                }
+              },
+              child: const Text('Entière'),
             ),
-          ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                final List<WorkingTime> workingTimes = workingTimesJsonList
+                    .map(
+                      (final dynamic e) => WorkingTime.fromJson(jsonDecode(e)),
+                    )
+                    .where(
+                      (final WorkingTime element) => !_workingTimes.any(
+                        (final WorkingTime wt) => wt.uuid == element.uuid,
+                      ),
+                    )
+                    .toList();
+
+                if (workingTimes.isEmpty) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'No new working times found',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return;
+                }
+
+                _workingTimes.addAll(workingTimes);
+                _workingTimes.sort(
+                  (final WorkingTime a, final WorkingTime b) =>
+                      a.startTime.compareTo(b.startTime),
+                );
+                await setWorkingTimes();
+
+                if (mounted) {
+                  setState(() {});
+                }
+              },
+              child: const Text('Partielle'),
+            ),
+          ],
         );
-      }
-
-      return;
-    }
-
-    _workingTimes.addAll(workingTimes);
-    _workingTimes.sort(
-      (final WorkingTime a, final WorkingTime b) =>
-          a.startTime.compareTo(b.startTime),
+      },
     );
-    await setWorkingTimes();
-
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   WorkingTime? get currentWorkingTime {

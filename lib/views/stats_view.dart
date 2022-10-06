@@ -137,7 +137,8 @@ class _StatsViewState extends State<StatsView> {
       )..setAttribute(rendererIdKey, 'customLine'),
       Series<Data, String>(
         id: 'Fixed data average',
-        colorFn: (final Data data, final int? __) => MaterialPalette.red.shadeDefault,
+        colorFn: (final Data data, final int? __) =>
+            MaterialPalette.red.shadeDefault,
         domainFn: (final Data data, final int? _) => data.day,
         measureFn: (final Data data, final int? _) => 3.5,
         data: getDayDataAverage,
