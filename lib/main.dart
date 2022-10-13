@@ -313,6 +313,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   } else {
                     cwt.end();
+
+                    await flnp.cancel(0);
                   }
 
                   await setWorkingTimes();
