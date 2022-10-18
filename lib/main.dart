@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -14,10 +15,59 @@ import 'package:timely/views/stats_view.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+@pragma('vm:entry-point')
+Future<void> background() async {
+  final DateTime now = DateTime.now();
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final int count = prefs.getInt('count') ?? 0;
+  await prefs.setInt('count', count + 1);
+  print('[$now] Background task ran $count times');
+
+  final FlutterLocalNotificationsPlugin flnp = FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings ais = AndroidInitializationSettings('splash');
+  await flnp.initialize(const InitializationSettings(android: ais));
+  // await flnp.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+
+  await flnp.show(
+    1,
+    'Test background notification',
+    'Hello world $count',
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'background',
+        'Background',
+        actions: <AndroidNotificationAction>[
+          AndroidNotificationAction(
+            'action',
+            'Action',
+          ),
+          AndroidNotificationAction(
+            'action2',
+            'Action 2',
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Europe/Paris'));
+
+  await AndroidAlarmManager.initialize();
+  print('Executing main [${DateTime.now()}]');
+  await AndroidAlarmManager.periodic(
+    const Duration(minutes: 2),
+    0,
+    background,
+    exact: true,
+    wakeup: true,
+    rescheduleOnReboot: true,
+  );
+
   runApp(const MyApp());
 }
 
