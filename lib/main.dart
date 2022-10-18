@@ -16,6 +16,13 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 @pragma('vm:entry-point')
+void odrbnr(final NotificationResponse response) {
+  print('Notification ${response.id} was tapped');
+  print('${response.payload}');
+  print('${response.input}');
+}
+
+@pragma('vm:entry-point')
 Future<void> background() async {
   final DateTime now = DateTime.now();
 
@@ -24,9 +31,14 @@ Future<void> background() async {
   await prefs.setInt('count', count + 1);
   print('[$now] Background task ran $count times');
 
-  final FlutterLocalNotificationsPlugin flnp = FlutterLocalNotificationsPlugin();
-  const AndroidInitializationSettings ais = AndroidInitializationSettings('splash');
-  await flnp.initialize(const InitializationSettings(android: ais));
+  final FlutterLocalNotificationsPlugin flnp =
+      FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings ais =
+      AndroidInitializationSettings('splash');
+  await flnp.initialize(
+    const InitializationSettings(android: ais),
+    onDidReceiveBackgroundNotificationResponse: odrbnr,
+  );
   // await flnp.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
 
   await flnp.show(
