@@ -16,35 +16,22 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 @pragma('vm:entry-point')
-void odrbnr(final NotificationResponse response) {
-  print('Notification ${response.id} was tapped');
-  print('${response.payload}');
-  print('${response.input}');
-}
-
-@pragma('vm:entry-point')
-Future<void> background() async {
-  final DateTime now = DateTime.now();
-
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final int count = prefs.getInt('count') ?? 0;
-  await prefs.setInt('count', count + 1);
-  print('[$now] Background task ran $count times');
-
-  final FlutterLocalNotificationsPlugin flnp =
-      FlutterLocalNotificationsPlugin();
-  const AndroidInitializationSettings ais =
-      AndroidInitializationSettings('splash');
+Future<void> showNotification({required final int id, final String? title, final String? description, final bool requestPermission = false}) async {
+  final FlutterLocalNotificationsPlugin flnp = FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings ais = AndroidInitializationSettings('splash');
   await flnp.initialize(
     const InitializationSettings(android: ais),
     onDidReceiveBackgroundNotificationResponse: odrbnr,
   );
-  // await flnp.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+
+  if (requestPermission) {
+    await flnp.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+  }
 
   await flnp.show(
-    1,
-    'Test background notification',
-    'Hello world $count',
+    id,
+    title,
+    description,
     const NotificationDetails(
       android: AndroidNotificationDetails(
         'background',
@@ -64,6 +51,26 @@ Future<void> background() async {
   );
 }
 
+@pragma('vm:entry-point')
+Future<void> odrbnr(final NotificationResponse response) async {
+  await showNotification(
+    id: 2,
+    description: 'Notification ${response.id} was tapped (${response.notificationResponseType.name} - ${response.actionId})',
+  );
+}
+
+@pragma('vm:entry-point')
+Future<void> background() async {
+  final DateTime now = DateTime.now();
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final int count = prefs.getInt('count') ?? 0;
+  await prefs.setInt('count', count + 1);
+  print('[$now] Background task ran $count times');
+
+  await showNotification(id: 1, title: 'Hello, World!');
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
@@ -72,7 +79,7 @@ Future<void> main() async {
   await AndroidAlarmManager.initialize();
   print('Executing main [${DateTime.now()}]');
   await AndroidAlarmManager.periodic(
-    const Duration(minutes: 2),
+    const Duration(minutes: 1),
     0,
     background,
     exact: true,
