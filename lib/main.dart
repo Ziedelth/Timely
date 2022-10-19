@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:platform_device_id_v3/platform_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timely/components/week_panel_list.dart';
 import 'package:timely/extensions.dart';
@@ -76,8 +78,11 @@ Future<void> main() async {
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Europe/Paris'));
 
-  await AndroidAlarmManager.initialize();
+  String? deviceId = await PlatformDeviceId.getDeviceId;
+  print('Device ID: $deviceId');
+
   print('Executing main [${DateTime.now()}]');
+  await AndroidAlarmManager.initialize();
   await AndroidAlarmManager.periodic(
     const Duration(minutes: 1),
     0,
