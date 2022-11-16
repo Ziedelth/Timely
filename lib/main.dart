@@ -382,9 +382,20 @@ class _MyHomePageState extends State<MyHomePage> {
             if (isInitialized) ...<Widget>[
               Padding(
                 padding: const EdgeInsets.all(8),
-                child: Text(
-                  'Total week working time: ${WorkingTime.sumWorkingTime(weeks.firstOrNull?.times ?? <WorkingTime>[]).toTimeFromSeconds()} / ${workTimeWeekInMinutes.toTimeFromMinutes()}',
-                  style: Theme.of(context).textTheme.headline6,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'Total week working time:',
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    Text(
+                      '${WorkingTime.sumWorkingTime(weeks.firstOrNull?.times ?? <WorkingTime>[]).toTimeFromSeconds()} / ${workTimeWeekInMinutes.toTimeFromMinutes()}',
+                      style: Theme.of(context).textTheme.headline6,
+                    )
+                  ],
                 ),
               ),
               Expanded(
