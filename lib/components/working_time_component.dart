@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timely/const.dart';
 import 'package:timely/extensions.dart';
 import 'package:timely/models/working_time.dart';
 
@@ -10,7 +11,7 @@ class WorkingTimeComponent extends StatelessWidget {
     title = Text(dateFormat.format(workingTime.startTime));
     subtitle = Text(
       workingTime.endTime == null
-          ? 'In progress'
+          ? 'Fin prévue à ${dateFormat.format(workingTime.startTime.add(const Duration(minutes: workTimeOnceInMinutes))).split(" ")[1]}'
           : dateFormat.format(workingTime.endTime!),
     );
   }

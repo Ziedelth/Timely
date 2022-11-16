@@ -1,6 +1,7 @@
 import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timely/const.dart';
 import 'package:timely/extensions.dart';
 import 'package:timely/models/working_time.dart';
 
@@ -140,7 +141,7 @@ class _StatsViewState extends State<StatsView> {
         colorFn: (final Data data, final int? __) =>
             MaterialPalette.red.shadeDefault,
         domainFn: (final Data data, final int? _) => data.day,
-        measureFn: (final Data data, final int? _) => 3.5,
+        measureFn: (final Data data, final int? _) => workTimeOnceInMinutes / 60,
         data: getDayDataAverage,
       )..setAttribute(rendererIdKey, 'customLine'),
     ]);

@@ -14,6 +14,8 @@ import 'package:timely/views/stats_view.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'const.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
@@ -29,7 +31,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.light,
+        primaryColor: Colors.blue,
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: Colors.blue,
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -277,7 +285,6 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: <Widget>[
           PopupMenuButton<int>(
             icon: const Icon(Icons.settings),
-            color: Colors.grey[100],
             onSelected: (final int result) async {
               switch (result) {
                 case 0:
@@ -298,9 +305,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     await flnp.zonedSchedule(
                       0,
                       "It's time",
-                      'Faites une pause, cela fait 3h30min que vous travaillez sans relache',
+                      'Faites une pause, cela fait ${workTimeOnceInMinutes.toTimeFromMinutes()} que vous travaillez sans relache',
                       tz.TZDateTime.now(tz.local)
-                          .add(const Duration(minutes: 210)),
+                          .add(const Duration(minutes: workTimeOnceInMinutes)),
                       const NotificationDetails(
                         android: AndroidNotificationDetails(
                           'time_to_out',
@@ -376,7 +383,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  'Total week working time: ${WorkingTime.sumWorkingTime(weeks.firstOrNull?.times ?? <WorkingTime>[]).toTimeFromSeconds()}',
+                  'Total week working time: ${WorkingTime.sumWorkingTime(weeks.firstOrNull?.times ?? <WorkingTime>[]).toTimeFromSeconds()} / ${workTimeWeekInMinutes.toTimeFromMinutes()}',
                   style: Theme.of(context).textTheme.headline6,
                 ),
               ),
