@@ -141,7 +141,8 @@ class _StatsViewState extends State<StatsView> {
         colorFn: (final Data data, final int? __) =>
             MaterialPalette.red.shadeDefault,
         domainFn: (final Data data, final int? _) => data.day,
-        measureFn: (final Data data, final int? _) => workTimeOnceInMinutes / 60,
+        measureFn: (final Data data, final int? _) =>
+            workTimeOnceInMinutes / 60,
         data: getDayDataAverage,
       )..setAttribute(rendererIdKey, 'customLine'),
     ]);
