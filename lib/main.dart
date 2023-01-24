@@ -389,11 +389,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     Text(
                       'Total week working time:',
-                      style: Theme.of(context).textTheme.headline5,
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
                       '${WorkingTime.sumWorkingTime(weeks.firstOrNull?.times ?? <WorkingTime>[]).toTimeFromSeconds()} / ${workTimeWeekInMinutes.toTimeFromMinutes()}',
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.titleLarge,
                     )
                   ],
                 ),
