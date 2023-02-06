@@ -133,6 +133,10 @@ class _MyHomePageState extends State<MyHomePage> {
     // Parse workingTimesJson
     final List<dynamic> workingTimesJsonList = jsonDecode(workingTimesJson);
 
+    if (!mounted) {
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (final BuildContext context) {
