@@ -406,6 +406,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: SingleChildScrollView(
                   child: WeekPanelList(
                     weeks: weeks.toList(),
+                    onSaved: () async {
+                      await setWorkingTimes();
+                      setState(() {});
+                    },
                   ),
                 ),
               ),

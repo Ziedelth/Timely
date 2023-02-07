@@ -6,7 +6,7 @@ part 'working_time.g.dart';
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class WorkingTime {
   late final String uuid;
-  final DateTime startTime;
+  DateTime startTime;
   DateTime? endTime;
 
   WorkingTime({required this.startTime, this.endTime, final String? uuid}) {
